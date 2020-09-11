@@ -1,25 +1,21 @@
-function Pokemon(name, level, experience, hp, attack, defense, SPattack, SPdefense, speed){
+var pokedex = [];
+
+function Pokemon(name, level, hp, attack, defense, speed){
 	this.name = name;
 	this.level = level;
-	this.experience = experience;
 	this.hp = hp;
 	this.attack = attack;
 	this.defense = defense;
-	this.SPattack = SPattack;
-	this.SPdefense = SPdefense;
 	this.speed = speed;
+	pokedex.push(this);
 }
-
-var Squirtle = new Pokemon('Squirtle', 1, 0, 44, 48, 65, 50, 64, 43);
-var Bulbasaur = new Pokemon('Bulbasaur', 1, 0, 45, 49, 49, 65, 65, 45);
-var Charmander = new Pokemon('Charmander', 1, 0, 39, 52, 43, 60, 50, 65);
-var Rattata = new Pokemon('Joey', 100, 1000000, 264, 232, 185, 163, 185, 267);
 
 function pokemonBattle(pokemon1, pokemon2){
 	while (pokemon1.hp > 0 && pokemon2.hp > 0){
-		console.log(pokemon1.name + ' current hp is ' + pokemon1.hp, '\n' + pokemon2.name + ' current hp is ' + pokemon2.hp);
+		alert(pokemon1.name + ' current hp is ' + pokemon1.hp + '\r\n' + pokemon2.name + ' current hp is ' + pokemon2.hp);
 		if (pokemon1.speed >= pokemon2.speed) {
 			pokemon2.hp -= Math.floor(Math.max(((((2 * pokemon1.level) / 5) + 2) * (pokemon1.attack / pokemon2.defense)) + 2, 0));
+			console.log(pokemon2.hp);
 			if (pokemon2.hp > 0) {
 				pokemon1.hp -= Math.floor(Math.max(((((2 * pokemon2.level) / 5) + 2) * (pokemon2.attack / pokemon1.defense)) + 2, 0));
 			}
@@ -30,6 +26,48 @@ function pokemonBattle(pokemon1, pokemon2){
 			}
 		}
 	}
+	if (pokemon1.hp <= 0) {
+		alert(pokemon1.name + ' has fainted');
+	} else {
+		alert(pokemon2.name + ' has fainted');
+	}
 }
 
-pokemonBattle(Squirtle, Bulbasaur);
+function battleButton(){
+
+	var pokemonName = document.getElementById('pokemonName').value;
+	var pokemonLevel = parseInt(document.getElementById('pokemonLevel').value);
+	var pokemonHp = parseInt(document.getElementById('pokemonHp').value);
+	var pokemonAttack = parseInt(document.getElementById('pokemonAttack').value);
+	var pokemonDefense = parseInt(document.getElementById('pokemonDefense').value);
+	var pokemonSpeed = parseInt(document.getElementById('pokemonSpeed').value);
+
+	eval('var ' + pokemonName + '= new Pokemon(\'' + pokemonName + '\',' + pokemonLevel + ',' + pokemonHp + ',' + pokemonAttack + ',' + pokemonDefense + ',' + pokemonSpeed + ')');
+
+	var whichMon = document.getElementById('instructions');
+	var submitButton = document.getElementById('submitButton');
+
+	if (pokedex.length == 1) {
+		whichMon.textContent = "Now enter the second pokemons information";
+		submitButton.setAttribute('value', 'Battle!');
+	} else {
+		pokemonBattle(pokedex[0], pokedex[1]);
+		whichMon.textContent = "Enter the first pokemons information and submit";
+		submitButton.setAttribute('value', 'Submit');
+		pokedex = [];
+	}
+}
+
+var newPokemonSubmit = document.getElementById('pokemonInformation');
+
+if (newPokemonSubmit.addEventListener) {
+	newPokemonSubmit.addEventListener('submit', function(e) {
+		e.preventDefault();
+		battleButton();
+	}, false);
+} else {
+	newPokemonSubmit.attachEvent('onsubmit', function(e) {
+		e.preventDefault();
+		battleButton();
+	});
+}
